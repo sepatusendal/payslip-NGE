@@ -109,8 +109,8 @@ payslip-app/
 
 ### 🔐 Login Admin
 Default credentials saat pertama kali jalankan:
-- Username: `admin`
-- Password: `admin123`
+- Username: `secret`
+- Password: `secret116`
 
 **Ganti password** setelah login pertama via Settings atau User Management.
 
