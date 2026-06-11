@@ -5,7 +5,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json({ limit: '10mb' }));
@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Session
 app.use(session({
-  secret: 'payslip-secret-key-2024-ganti-ini',
+  secret: process.env.SESSION_SECRET,,
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false, httpOnly: true, maxAge: 8 * 60 * 60 * 1000 } // 8 jam
