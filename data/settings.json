@@ -1,0 +1,29 @@
+{
+  "companyName": "PT NUFA GLOBAL EDUCATION",
+  "companyAddress": "Ruko Melawai 2 No.C25, Jl. Metland Cibitung, Wanajaya, Kec. Cibitung, Kabupaten Bekasi, Jawa Barat 17520",
+  "companyPhone": "021-5551234",
+  "companyEmail": "hello@nufaglobaledu.com",
+  "companyNPWP": "01.234.567.8-901.000",
+  "logo": "/img/company-logo.png",
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "user": "",
+    "pass": "",
+    "from": ""
+  },
+  "currency": "IDR",
+  "pph21Method": "gross",
+  "bpjsKesehatan": {
+    "employee": 1,
+    "employer": 4
+  },
+  "bpjsKetenagakerjaan": {
+    "jht_employee": 2,
+    "jht_employer": 3.7,
+    "jp_employee": 1,
+    "jp_employer": 2,
+    "jkk": 0.24,
+    "jkm": 0.3
+  }
+}

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payslip NUFA GLOBAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+  <img
+    src="https://i.ibb.co.com/qLTTt7hc/FINAL-Nufa-Global-Identity-Logo-4-5.png"
+    alt="NUFA Global Logo"
+    style="width:80px;height:40px;object-fit:contain;"
+  >
+  <span class="logo-text">NGE</span>
+</div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">🏠</span> Dashboard</button>
+        <button class="nav-item" data-page="generate"><span class="nav-icon">⚡</span> Generate Payslip</button>
+        <button class="nav-item" data-page="employees"><span class="nav-icon">👥</span> Karyawan</button>
+        <button class="nav-item" data-page="history"><span class="nav-icon">📂</span> Riwayat</button>
+        <button class="nav-item" data-page="export-import"><span class="nav-icon">📤</span> Export / Import</button>
+        <div class="nav-divider"></div>
+        <button class="nav-item admin-only" data-page="users"><span class="nav-icon">🔐</span> Manajemen User</button>
+        <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span> Settings</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info" id="sidebar-user">
+          <div class="user-avatar" id="user-avatar">A</div>
+          <div class="user-detail">
+            <div class="user-name" id="user-name">Admin</div>
+            <div class="user-role" id="user-role">admin</div>
+          </div>
+          <button class="btn-logout" onclick="doLogout()" title="Logout">⏏</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- ── Dashboard ────────────────────────────────── -->
+      <section id="page-dashboard" class="page active">
+        <div class="page-header">
+          <div><h1>Dashboard</h1><p class="page-subtitle">Selamat datang di PaySlip by NUFA GLOBAL 👋</p></div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-info"><div class="stat-value" id="stat-employees">0</div><div class="stat-label">Total Karyawan</div></div></div>
+          <div class="stat-card"><div class="stat-icon">📄</div><div class="stat-info"><div class="stat-value" id="stat-payslips">0</div><div class="stat-label">Total Slip Dibuat</div></div></div>
+          <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-info"><div class="stat-value" id="stat-this-month">0</div><div class="stat-label">Bulan Ini</div></div></div>
+          <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-info"><div class="stat-value" id="stat-total-gaji">Rp 0</div><div class="stat-label">Payroll Bulan Ini</div></div></div>
+        </div>
+        <div class="card mt-24">
+          <div class="card-header"><h3>Slip Gaji Terbaru</h3><button class="btn btn-sm btn-ghost" onclick="switchPage('history')">Lihat semua →</button></div>
+          <div id="recent-payslips"></div>
+        </div>
+      </section>
+
+      <!-- ── Generate ────────────────────────────────── -->
+      <section id="page-generate" class="page">
+        <div class="page-header"><div><h1>⚡ Generate Payslip</h1><p class="page-subtitle">Buat slip gaji baru dengan perhitungan otomatis</p></div></div>
+        <div class="generate-layout">
+          <div class="generate-form card">
+            <div class="form-group">
+              <label>Karyawan *</label>
+              <select id="gen-employee" onchange="onEmployeeSelect()"><option value="">-- Pilih Karyawan --</option></select>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Bulan *</label>
+                <select id="gen-month">
+                  <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                  <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                  <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                  <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Tahun *</label><input type="number" id="gen-year" value="2025" min="2020" max="2030"></div>
+            </div>
+            <div class="section-divider">💰 Komponen Gaji</div>
+            <div class="form-row">
+              <div class="form-group"><label>Gaji Pokok</label><input type="number" id="gen-gajiPokok" placeholder="0" oninput="triggerCalculate()"></div>
+              <div class="form-group"><label>Tunjangan Tetap</label><input type="number" id="gen-tunjanganTetap" placeholder="0" oninput="triggerCalculate()"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Uang Makan</label><input type="number" id="gen-uangMakan" placeholder="0" oninput="triggerCalculate()"></div>
+              <div class="form-group"><label>Uang Transport</label><input type="number" id="gen-uangTransport" placeholder="0" oninput="triggerCalculate()"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Bonus / THR</label><input type="number" id="gen-bonus" placeholder="0" oninput="triggerCalculate()"></div>
+              <div class="form-group"><label>Tunjangan Lain-lain</label><input type="number" id="gen-tunjanganLain" placeholder="0" oninput="triggerCalculate()"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Jam Lembur</label><input type="number" id="gen-lemburJam" placeholder="0" min="0" oninput="triggerCalculate()"></div>
+              <div class="form-group"><label>Status Pajak</label>
+                <select id="gen-statusPajak" onchange="triggerCalculate()">
+                  <option value="TK0">TK/0</option><option value="TK1">TK/1</option><option value="TK2">TK/2</option><option value="TK3">TK/3</option>
+                  <option value="K0">K/0</option><option value="K1">K/1</option><option value="K2">K/2</option><option value="K3">K/3</option>
+                </select>
+              </div>
+            </div>
+            <div class="section-divider">✂️ Potongan Tambahan</div>
+            <div class="form-row">
+              <div class="form-group"><label>Kasbon</label><input type="number" id="gen-kasbon" placeholder="0" oninput="triggerCalculate()"></div>
+              <div class="form-group"><label>Potongan Lain-lain</label><input type="number" id="gen-potonganLain" placeholder="0" oninput="triggerCalculate()"></div>
+            </div>
+            <div class="form-group"><label>Catatan</label><textarea id="gen-notes" rows="2" placeholder="Catatan tambahan (opsional)..."></textarea></div>
+            <div class="form-check"><input type="checkbox" id="gen-hasNPWP" checked onchange="triggerCalculate()"><label for="gen-hasNPWP">Memiliki NPWP</label></div>
+            <div class="form-actions">
+              <button class="btn btn-secondary" onclick="calculatePreview()">🔄 Hitung</button>
+              <button class="btn btn-primary" onclick="generatePayslip()">⚡ Generate & Simpan</button>
+            </div>
+          </div>
+          <div class="preview-panel">
+            <div class="card preview-card" id="calc-preview">
+              <div class="preview-placeholder"><div style="font-size:48px">🧮</div><p>Pilih karyawan dan isi data gaji untuk melihat preview perhitungan</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Karyawan ────────────────────────────────── -->
+      <section id="page-employees" class="page">
+        <div class="page-header">
+          <div><h1>👥 Data Karyawan</h1><p class="page-subtitle">Kelola data karyawan perusahaan</p></div>
+          <div class="header-actions">
+            <button class="btn btn-secondary" onclick="switchPage('export-import')">📥 Import CSV</button>
+            <button class="btn btn-primary" onclick="openEmployeeModal()">+ Tambah Karyawan</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-toolbar"><input type="text" id="emp-search" placeholder="🔍 Cari karyawan..." oninput="filterEmployees()" class="search-input"></div>
+          <div id="employees-table"></div>
+        </div>
+      </section>
+
+      <!-- ── Riwayat ─────────────────────────────────── -->
+      <section id="page-history" class="page">
+        <div class="page-header">
+          <div><h1>📂 Riwayat Payslip</h1><p class="page-subtitle">Semua slip gaji yang telah dibuat</p></div>
+          <div class="header-actions">
+            <select id="filter-month" onchange="loadHistory()" class="filter-select">
+              <option value="">Semua Bulan</option>
+              <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+              <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+              <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+              <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+            </select>
+            <input type="number" id="filter-year" placeholder="Tahun" oninput="loadHistory()" class="filter-input" style="width:90px;">
+          </div>
+        </div>
+        <div class="card" id="history-table"></div>
+      </section>
+
+      <!-- ── Export / Import ────────────────────────── -->
+      <section id="page-export-import" class="page">
+        <div class="page-header"><div><h1>📤 Export / Import</h1><p class="page-subtitle">Download data payroll atau upload karyawan dari CSV</p></div></div>
+
+        <div class="ei-grid">
+          <!-- Export Payroll -->
+          <div class="card">
+            <h3 class="settings-title">📊 Export Payroll</h3>
+            <p class="text-muted mb-16">Download rekapitulasi payroll dalam format CSV atau cetak laporan.</p>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Bulan</label>
+                <select id="exp-month">
+                  <option value="">Semua Bulan</option>
+                  <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                  <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                  <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                  <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Tahun</label><input type="number" id="exp-year" placeholder="2025" value="2025"></div>
+            </div>
+            <div class="export-btns">
+              <button class="btn btn-primary" onclick="exportPayroll('csv')">⬇️ Download CSV</button>
+              <button class="btn btn-secondary" onclick="exportPayroll('recap')">🖨️ Cetak Rekap</button>
+              <button class="btn btn-secondary" onclick="exportPayroll('json')">📦 Export JSON</button>
+            </div>
+            <div class="info-box mt-16" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534;">
+              💡 CSV bisa langsung dibuka di <strong>Excel / Google Sheets</strong>. Format kolom sudah sesuai untuk payroll reporting.
+            </div>
+          </div>
+
+          <!-- Export Karyawan -->
+          <div class="card">
+            <h3 class="settings-title">👥 Export Data Karyawan</h3>
+            <p class="text-muted mb-16">Download semua data karyawan ke CSV. Bisa digunakan sebagai template import.</p>
+            <button class="btn btn-primary" onclick="exportEmployees()">⬇️ Download CSV Karyawan</button>
+            <div class="info-box mt-16">
+              💡 File ini juga berfungsi sebagai <strong>template import</strong>. Edit data di Excel lalu upload kembali.
+            </div>
+          </div>
+
+          <!-- Import Karyawan -->
+          <div class="card" style="grid-column: 1 / -1;">
+            <h3 class="settings-title">📥 Import Karyawan dari CSV</h3>
+            <p class="text-muted mb-16">Upload file CSV untuk menambahkan karyawan secara massal. Karyawan yang sudah ada (nama/no karyawan sama) akan dilewati.</p>
+
+            <div class="import-zone" id="import-zone"
+              ondragover="event.preventDefault();this.classList.add('drag-over')"
+              ondragleave="this.classList.remove('drag-over')"
+              ondrop="handleDrop(event)">
+              <div class="import-zone-inner">
+                <div style="font-size:40px">📂</div>
+                <p style="font-weight:500;margin-top:8px;">Drop file CSV di sini, atau</p>
+                <button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="document.getElementById('csv-file').click()">Pilih File</button>
+                <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="handleFileSelect()">
+                <p class="text-muted" style="font-size:12px;margin-top:8px;" id="selected-file-name">Belum ada file dipilih</p>
+              </div>
+            </div>
+
+            <div class="import-template mt-16">
+              <strong>Format kolom CSV yang didukung:</strong>
+              <code class="col-example">Nama, No Karyawan, NIK KTP, NPWP, Jabatan, Departemen, Email, No HP, Status Pajak, Memiliki NPWP, Gaji Pokok, Tunjangan Tetap, Uang Makan, Uang Transport</code>
+            </div>
+
+            <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+              <button class="btn btn-primary" onclick="doImport()" id="btn-import" disabled>⬆️ Import Sekarang</button>
+              <button class="btn btn-ghost btn-sm" onclick="downloadTemplate()">📄 Download Template</button>
+            </div>
+            <div id="import-result" style="margin-top:16px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── User Management ────────────────────────── -->
+      <section id="page-users" class="page admin-page">
+        <div class="page-header">
+          <div><h1>🔐 Manajemen User</h1><p class="page-subtitle">Kelola akun login sistem payslip</p></div>
+          <button class="btn btn-primary" onclick="openUserModal()">+ Tambah User</button>
+        </div>
+        <div class="card" id="users-table"></div>
+      </section>
+
+      <!-- ── Settings ───────────────────────────────── -->
+      <section id="page-settings" class="page">
+        <div class="page-header"><div><h1>⚙️ Settings</h1><p class="page-subtitle">Konfigurasi perusahaan, SMTP, dan kalkulasi pajak</p></div></div>
+        <div class="settings-layout">
+          <div class="card settings-card">
+            <h3 class="settings-title">🏢 Data Perusahaan</h3>
+            <div class="form-group">
+              <label>Logo Perusahaan</label>
+              <div class="logo-upload-area" onclick="document.getElementById('logo-file').click()">
+                <img id="logo-preview" src="" alt="" style="display:none;max-height:60px;">
+                <div id="logo-placeholder">📤 Klik untuk upload logo (PNG/JPG, max 2MB)</div>
+                <input type="file" id="logo-file" accept="image/*" onchange="previewLogo()" style="display:none">
+              </div>
+            </div>
+            <div class="form-group"><label>Nama Perusahaan *</label><input type="text" id="s-companyName" placeholder="PT Nama Perusahaan"></div>
+            <div class="form-group"><label>Alamat Perusahaan</label><textarea id="s-companyAddress" rows="2" placeholder="Jl. Alamat Perusahaan..."></textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label>No. Telepon</label><input type="text" id="s-companyPhone" placeholder="021-1234567"></div>
+              <div class="form-group"><label>Email Perusahaan</label><input type="email" id="s-companyEmail" placeholder="hrd@company.co.id"></div>
+            </div>
+            <div class="form-group"><label>NPWP Perusahaan</label><input type="text" id="s-companyNPWP" placeholder="00.000.000.0-000.000"></div>
+          </div>
+
+          <div class="card settings-card">
+            <h3 class="settings-title">📧 Konfigurasi Email (SMTP)</h3>
+            <div class="info-box">💡 Untuk Gmail: aktifkan 2FA lalu buat <strong>App Password</strong>.<br><a href="https://myaccount.google.com/apppasswords" target="_blank" class="link">Buat App Password Gmail →</a></div>
+            <div class="form-row">
+              <div class="form-group"><label>SMTP Host</label><input type="text" id="s-smtpHost" placeholder="smtp.gmail.com"></div>
+              <div class="form-group"><label>Port</label><input type="number" id="s-smtpPort" placeholder="587"></div>
+            </div>
+            <div class="form-group"><label>Username / Email Gmail</label><input type="email" id="s-smtpUser" placeholder="youremail@gmail.com"></div>
+            <div class="form-group"><label>App Password</label>
+              <div class="input-password-wrap"><input type="password" id="s-smtpPass" placeholder="••••••••"><button class="toggle-pass" onclick="togglePassword('s-smtpPass')">👁</button></div>
+            </div>
+            <div class="form-group"><label>From Email</label><input type="email" id="s-smtpFrom" placeholder="hrd@perusahaan.co.id"></div>
+            <button class="btn btn-secondary btn-sm" onclick="testSMTP()">🔗 Test Koneksi</button>
+            <div id="smtp-test-result" style="margin-top:8px;"></div>
+          </div>
+
+          <div class="card settings-card">
+            <h3 class="settings-title">🏥 Tarif BPJS</h3>
+            <div class="settings-section-label">BPJS Kesehatan (%)</div>
+            <div class="form-row">
+              <div class="form-group"><label>Karyawan</label><input type="number" id="s-bpjsKesehatanEmployee" step="0.1"></div>
+              <div class="form-group"><label>Perusahaan</label><input type="number" id="s-bpjsKesehatanEmployer" step="0.1"></div>
+            </div>
+            <div class="settings-section-label mt-16">BPJS Ketenagakerjaan (%)</div>
+            <div class="form-row">
+              <div class="form-group"><label>JHT Karyawan</label><input type="number" id="s-jhtEmployee" step="0.1"></div>
+              <div class="form-group"><label>JHT Perusahaan</label><input type="number" id="s-jhtEmployer" step="0.1"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>JP Karyawan</label><input type="number" id="s-jpEmployee" step="0.1"></div>
+              <div class="form-group"><label>JP Perusahaan</label><input type="number" id="s-jpEmployer" step="0.1"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>JKK (%)</label><input type="number" id="s-jkk" step="0.01"></div>
+              <div class="form-group"><label>JKM (%)</label><input type="number" id="s-jkm" step="0.01"></div>
+            </div>
+          </div>
+
+          <div class="card settings-card">
+            <h3 class="settings-title">🧾 PPh 21</h3>
+            <div class="form-group">
+              <label>Metode Perhitungan</label>
+              <select id="s-pph21Method">
+                <option value="gross">Gross (ditanggung karyawan)</option>
+                <option value="nett">Nett (ditanggung perusahaan)</option>
+                <option value="gross_up">Gross Up (tunjangan PPh)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+          <button class="btn btn-primary" onclick="saveSettings()">💾 Simpan Settings</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Employee Modal -->
+  <div id="emp-modal" class="modal-overlay" style="display:none" onclick="closeEmployeeModal(event)">
+    <div class="modal-box">
+      <div class="modal-header"><h3 id="emp-modal-title">Tambah Karyawan</h3><button class="modal-close" onclick="closeEmployeeModal()">✕</button></div>
+      <div class="modal-body">
+        <input type="hidden" id="emp-id">
+        <div class="form-row">
+          <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="emp-name" placeholder="Nama karyawan"></div>
+          <div class="form-group"><label>No. Karyawan</label><input type="text" id="emp-noKaryawan" placeholder="KRY-001"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>NIK KTP</label><input type="text" id="emp-nik"></div>
+          <div class="form-group"><label>NPWP</label><input type="text" id="emp-npwp"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Jabatan</label><input type="text" id="emp-position" placeholder="Staff, Manager, dll"></div>
+          <div class="form-group"><label>Departemen</label><input type="text" id="emp-department" placeholder="IT, Finance, dll"></div>
+        </div>
+        <div class="form-group"><label>Email *</label><input type="email" id="emp-email" placeholder="nama@email.com"></div>
+        <div class="form-group"><label>No. HP</label><input type="text" id="emp-phone" placeholder="08123..."></div>
+        <div class="section-divider">💰 Gaji Default</div>
+        <div class="form-row">
+          <div class="form-group"><label>Gaji Pokok</label><input type="number" id="emp-gajiPokok" placeholder="0"></div>
+          <div class="form-group"><label>Tunjangan Tetap</label><input type="number" id="emp-tunjanganTetap" placeholder="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Uang Makan</label><input type="number" id="emp-uangMakan" placeholder="0"></div>
+          <div class="form-group"><label>Uang Transport</label><input type="number" id="emp-uangTransport" placeholder="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Status Pajak</label>
+            <select id="emp-statusPajak">
+              <option value="TK0">TK/0</option><option value="TK1">TK/1</option><option value="TK2">TK/2</option><option value="TK3">TK/3</option>
+              <option value="K0">K/0</option><option value="K1">K/1</option><option value="K2">K/2</option><option value="K3">K/3</option>
+            </select>
+          </div>
+          <div class="form-group" style="justify-content:flex-end;padding-top:24px;">
+            <div class="form-check"><input type="checkbox" id="emp-hasNPWP" checked><label for="emp-hasNPWP">Memiliki NPWP</label></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeEmployeeModal()">Batal</button>
+        <button class="btn btn-primary" onclick="saveEmployee()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Modal -->
+  <div id="user-modal" class="modal-overlay" style="display:none" onclick="closeUserModal(event)">
+    <div class="modal-box" style="max-width:440px">
+      <div class="modal-header"><h3 id="user-modal-title">Tambah User</h3><button class="modal-close" onclick="closeUserModal()">✕</button></div>
+      <div class="modal-body">
+        <input type="hidden" id="u-id">
+        <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="u-name" placeholder="Nama user"></div>
+        <div class="form-group"><label>Username *</label><input type="text" id="u-username" placeholder="username (huruf kecil, tanpa spasi)"></div>
+        <div class="form-group">
+          <label>Password <span id="u-pass-hint" style="font-weight:400;color:var(--text-muted)"></span></label>
+          <div class="input-password-wrap">
+            <input type="password" id="u-password" placeholder="Minimal 6 karakter">
+            <button class="toggle-pass" onclick="togglePassword('u-password')">👁</button>
+          </div>
+        </div>
+        <div class="form-group"><label>Role</label>
+          <select id="u-role">
+            <option value="admin">Admin (akses penuh)</option>
+            <option value="staff">Staff (lihat & generate saja)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeUserModal()">Batal</button>
+        <button class="btn btn-primary" onclick="saveUser()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
